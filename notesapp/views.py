@@ -36,10 +36,13 @@ class UserList(generics.ListAPIView):
     # List all users
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly)
 
 
 class UserDetail(generics.RetrieveAPIView):
     # Retrieve a user
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
+	pemission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+	
 
