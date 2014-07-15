@@ -50,6 +50,12 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+# REST_FRAMEWORK = {
+#    'DEFAULT_PERMISSION_CLASSES': [
+#       'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+#   ]
+#}
+
 ROOT_URLCONF = 'notes.urls'
 
 WSGI_APPLICATION = 'notes.wsgi.application'
