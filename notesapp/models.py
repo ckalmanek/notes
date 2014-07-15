@@ -4,7 +4,7 @@ from django.db import models
 class Note(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     body = models.TextField()
-    # owner = models.ForeignKey('auth.user', related_name='notesapp_note_related')
+    owner = models.ForeignKey('auth.user', related_name='notesapp')
 
     class Meta:
 	ordering = ('created',)

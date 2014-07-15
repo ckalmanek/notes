@@ -6,31 +6,28 @@ from notesapp.models import Note
 class NoteSerializer(serializers.Serializer):
     pk = serializers.Field()
     body = serializers.CharField(widget=widgets.Textarea, max_length=100000)
-    # owner = serializers.Field(source='owner.username')
+    owner = serializers.Field(source='owner.username')
 
     def restore_object(self, attrs, instance=None):
-	"""
-	Create or update a new Note instance, given a dictionary attrs
-	of deserialized field values.
-	"""
-	if instance:
-	    # Update existing instance
-	    instance.body = attrs.get('body', instance.body)
-	    # instance.owner = attrs.get('owner', instance.owner)
-	    return instance
+    # Create or update a new Note instance, given a dictionary attrs of deserialized field values.
 
-	# Create new Note
-	return Note(**attrs)
+        if instance:
+            # Update existing instance
+            instance.body = attrs.get('body', instance.body)
+            # instance.owner = attrs.get('owner', instance.owner)
+            return instance
 
-	class Meta:
-		model = Note
-		fields = {'body'}
-		# fields = ('owner', 'body')
-"""
+		# Create new Note
+        return Note(**attrs)
+
+        class Meta:
+            model = Note
+            fields = {'body'}
+			# fields = ('owner', 'body')
+
 class UserSerializer(serializers.ModelSerializer):
-	notes = serializers.PrimaryKeyRelatedField(many=True)
+    notes = serializers.PrimaryKeyRelatedField(many=True)
 
-	class Meta:
-		model = User
-		fields = ('id', 'username', 'notesapp_note_related')
-"""
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'notesapp')
