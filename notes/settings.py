@@ -50,11 +50,12 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-# REST_FRAMEWORK = {
+REST_FRAMEWORK = {
+    'PAGINATE_BY': 10, 
 #    'DEFAULT_PERMISSION_CLASSES': [
 #       'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
 #   ]
-#}
+}
 
 ROOT_URLCONF = 'notes.urls'
 
