@@ -10,6 +10,13 @@ class NoteSerializer(serializers.HyperlinkedModelSerializer):
         model = Note
         fields = ('url', 'owner', 'body')
 
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.Field(source='owner.username')
+
+    class Meta:
+        model = Comment
+        fields = ('url', 'owner', 'note', 'body')
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     # notes = serializers.PrimaryKeyRelatedField(many=True)
     notes = serializers.HyperlinkedRelatedField(many=True, view_name='notes-detail')

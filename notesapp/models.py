@@ -4,7 +4,17 @@ from django.db import models
 class Note(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     body = models.TextField()
-    owner = models.ForeignKey('auth.user', related_name='notesapp')
+    owner = models.ForeignKey('auth.user')
 
     class Meta:
 	ordering = ('created',)
+
+class Comment(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	body = models.TextField()
+	owner = models.ForeignKey('auth.user')
+	note = models.ForeignKey('note')
+	
+	class Meta:
+	ordering = ('created',)
+

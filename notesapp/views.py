@@ -35,6 +35,28 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     def pre_save(self, obj):
     	obj.owner = self.request.user
 
+class CommentList(generics.ListCreateAPIView):
+    # List all commments associated with a note, or create a new comment
+
+    queryset = Comment.objects.filter(note_id=pk)
+    serializer_class = CommentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, 
+                            IsOWnerOrReadOnly)
+
+    def pre_save(self,obj):
+        obj.owner = self.request.user
+
+class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
+    # Retrieve, update or delete a note 
+
+    queryset = Comment.objects.filter(note_id=pk)
+    serializer_class = CommentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                            IsOwnerOrReadOnly)
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
 class UserList(generics.ListAPIView):
     # List all users
     queryset = User.objects.all()
