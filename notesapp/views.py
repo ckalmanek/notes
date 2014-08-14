@@ -7,8 +7,10 @@ from rest_framework.reverse import reverse
 from rest_framework import generics
 from rest_framework import permissions
 from notesapp.models import Note
+from notesapp.models import Comment
 from notesapp.serializers import NoteSerializer
 from notesapp.permissions import IsOwnerOrReadOnly
+from notesapp.serializers import CommentSerializer
 from django.http import Http404
 from django.contrib.auth.models import User
 from notesapp.serializers import UserSerializer
@@ -36,20 +38,21 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     	obj.owner = self.request.user
 
 class CommentList(generics.ListCreateAPIView):
-    # List all commments associated with a note, or create a new comment
+    # List all commments associated with a note, or create a new commment
 
-    queryset = Comment.objects.filter(note_id=pk)
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, 
-                            IsOWnerOrReadOnly)
+                            IsOwnerOrReadOnly)
 
-    def pre_save(self,obj):
+    def pre_save(self, obj):
         obj.owner = self.request.user
+
 
 class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
     # Retrieve, update or delete a note 
 
-    queryset = Comment.objects.filter(note_id=pk)
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                             IsOwnerOrReadOnly)
