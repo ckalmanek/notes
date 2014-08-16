@@ -13,8 +13,7 @@ class Comment(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	body = models.TextField()
 	owner = models.ForeignKey('auth.user')
-	note = models.ForeignKey(Note, related_name='comments')
+	note = models.ForeignKey(Note, related_name='comment')
 	
 	class Meta:
 	    ordering = ('created',)
-

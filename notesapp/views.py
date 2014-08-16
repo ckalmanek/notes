@@ -40,16 +40,27 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
 class CommentList(generics.ListCreateAPIView):
     # List all commments associated with a note, or create a new commment
 
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        #queryset = Comment.objects.all()
+        pk = self.kwargs['pk']
+        note = Note.objects.get(pk=pk)
+        note_url = "http://127.0.0.1:8000/notesapp/" + str(pk)
+        print note_url
+        queryset = Comment.objects.filter(note=note)
+        return queryset
+
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, 
                             IsOwnerOrReadOnly)
 
     def pre_save(self, obj):
         obj.owner = self.request.user
+        print self.request
+        obj.note = Note.objects.get(pk=1)
 
 
-class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
+class CommentRUD(generics.RetrieveUpdateDestroyAPIView):
     # Retrieve, update or delete a note 
 
     queryset = Comment.objects.all()
@@ -59,6 +70,7 @@ class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def pre_save(self, obj):
         obj.owner = self.request.user
+        #obj.note = Note.objects.get(pk=1)
 
 class UserList(generics.ListAPIView):
     # List all users
