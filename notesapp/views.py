@@ -43,11 +43,12 @@ class CommentList(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        #queryset = Comment.objects.all()
-        pk = self.kwargs['pk']
-        note = Note.objects.get(pk=pk)
-        note_url = "http://127.0.0.1:8000/notesapp/" + str(pk)
-        print note_url
+        queryset = []
+        notekey = self.kwargs['pk']
+        try:
+            note = Note.objects.get(pk=notekey)
+        except Note.DoesNotExist:
+            return queryset
         queryset = Comment.objects.filter(note=note)
         return queryset
 
@@ -56,21 +57,34 @@ class CommentList(generics.ListCreateAPIView):
 
     def pre_save(self, obj):
         obj.owner = self.request.user
-        print self.request
-        obj.note = Note.objects.get(pk=1)
+        notekey = self.kwargs['pk']
+        obj.note = Note.objects.get(pk=notekey)
 
 
 class CommentRUD(generics.RetrieveUpdateDestroyAPIView):
     # Retrieve, update or delete a note 
 
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        queryset = []
+        notekey = self.kwargs['pk']
+        commentkey = self.kwargs['ck']
+        try:
+            note = Note.objects.get(pk=notekey)
+        except Note.DoesNotExist:
+            return queryset
+        queryset = Comment.objects.filter(note=note)
+        return queryset
+
+
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                             IsOwnerOrReadOnly)
 
     def pre_save(self, obj):
         obj.owner = self.request.user
-        #obj.note = Note.objects.get(pk=1)
+        notekey = self.kwargs['pk']
+        obj.note = Note.objects.get(pk=notekey)
 
 class UserList(generics.ListAPIView):
     # List all users
