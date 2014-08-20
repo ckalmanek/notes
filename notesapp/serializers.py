@@ -16,12 +16,15 @@ class NoteSerializer(serializers.HyperlinkedModelSerializer):
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.Field(source='owner.username')
+    #comment_url = serializers.HyperlinkedIdentityField(view_name='comment-detail',
+                                    #lookup_field='comment_id')
     note = serializers.HyperlinkedRelatedField(read_only=True,
-                                                view_name="note-detail")
+                                                view_name='note-detail')
 
     class Meta:
         model = Comment
-        fields = ('url', 'owner', 'body', 'note')
+        fields = ('url', 'comment_id', 'owner', 'body', 'note')
+        # url_field_name='comment_url'
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     # notes = serializers.PrimaryKeyRelatedField(many=True)
