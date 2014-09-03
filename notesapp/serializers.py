@@ -6,15 +6,14 @@ from notesapp.models import Comment
 
 class NoteSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.Field(source='owner.username')
-    comment = serializers.HyperlinkedRelatedField(many=True, read_only=True, 
-                                                    required=False,
-                                                    view_name='comment-detail')
+    comment = serializers.RelatedField(many=True, read_only=True, 
+                                                    required=False)
 
     class Meta:
         model = Note
         fields = ('url', 'owner', 'body', 'comment')
 
-class CommentSerializer(serializers.HyperlinkedModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     owner = serializers.Field(source='owner.username')
     #comment_url = serializers.HyperlinkedIdentityField(view_name='comment-detail',
                                     #lookup_field='comment_id')
@@ -23,7 +22,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('url', 'comment_id', 'owner', 'body', 'note')
+        fields = ('comment_id', 'owner', 'body', 'note')
         # url_field_name='comment_url'
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

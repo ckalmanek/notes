@@ -37,6 +37,15 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     def pre_save(self, obj):
     	obj.owner = self.request.user
 
+class CommentListAll(generics.ListAPIView):
+    # List all commments 
+
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, 
+                            IsOwnerOrReadOnly)
+
 class CommentList(generics.ListCreateAPIView):
     # List all commments associated with a note, or create a new commment
 
@@ -60,35 +69,17 @@ class CommentList(generics.ListCreateAPIView):
         notekey = self.kwargs['pk']
         obj.note = Note.objects.get(pk=notekey)
 
-    def post_save(self, obj, created=False):
-        print "post_save " + str(obj.comment_id)
-
-class CommentRUD(generics.RetrieveUpdateDestroyAPIView):
-    # Retrieve, update or delete a note 
+class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
+    # Retrieve, update or delete a comment 
 
     serializer_class = CommentSerializer
-
-    def get_queryset(self):
-        queryset = []
-        notekey = self.kwargs['pk']
-        #commentkey = self.kwargs['comment_id']
-        try:
-            note = Note.objects.get(pk=notekey)
-        except Note.DoesNotExist:
-            return queryset
-        queryset = Comment.objects.filter(note=note)
-        #queryset = queryset.filter(comment_id=commentkey)
-        return queryset       
+    queryset = Comment.objects.all()    
 
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                             IsOwnerOrReadOnly)
 
     def pre_save(self, obj):
         obj.owner = self.request.user
-        notekey = self.kwargs['pk']
-        commentkey = self.kwargs['comment_id']
-        print notekey, commentkey
-        obj.note = Note.objects.get(pk=notekey)
 
 class UserList(generics.ListAPIView):
     # List all users

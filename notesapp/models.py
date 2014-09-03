@@ -7,7 +7,7 @@ class Note(models.Model):
     owner = models.ForeignKey('auth.user')
  
     class Meta:
-	    ordering = ('created',)
+    	ordering = ('created',)
 
 class Comment(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
@@ -17,4 +17,7 @@ class Comment(models.Model):
 	comment_id = models.AutoField(primary_key=True)
 	
 	class Meta:
-	    ordering = ('created',)
+		ordering = ('created',)
+
+	def __unicode__(self):
+		return '%d: %s' % (self.comment_id, self.body)
