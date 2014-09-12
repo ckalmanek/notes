@@ -1,10 +1,16 @@
 from django.db import models
 
-# Create your models here.
+class Tag(models.Model):
+	body = models.TextField()
+
+	def __unicode__(self):
+		return '%d: %s' % (self.pk, self.body)
+
 class Note(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     body = models.TextField()
     owner = models.ForeignKey('auth.user')
+    tags = models.ManyToManyField(Tag)
  
     class Meta:
     	ordering = ('created',)
@@ -21,3 +27,4 @@ class Comment(models.Model):
 
 	def __unicode__(self):
 		return '%d: %s' % (self.comment_id, self.body)
+

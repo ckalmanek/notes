@@ -1,34 +1,45 @@
 from django.forms import widgets
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework import reverse
 from notesapp.models import Note
 from notesapp.models import Comment
+from notesapp.models import Tag
 
 class NoteSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.Field(source='owner.username')
-    comment = serializers.RelatedField(many=True, read_only=True, 
-                                                    required=False)
+    comment = serializers.RelatedField(many=True)
+    tags = serializers.RelatedField(many=True)
 
     class Meta:
         model = Note
-        fields = ('url', 'owner', 'body', 'comment')
+        fields = ('url', 'owner', 'body', 'comment', 'tags')
 
 class CommentSerializer(serializers.ModelSerializer):
     owner = serializers.Field(source='owner.username')
-    #comment_url = serializers.HyperlinkedIdentityField(view_name='comment-detail',
-                                    #lookup_field='comment_id')
     note = serializers.HyperlinkedRelatedField(read_only=True,
                                                 view_name='note-detail')
 
     class Meta:
         model = Comment
         fields = ('comment_id', 'owner', 'body', 'note')
-        # url_field_name='comment_url'
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    # notes = serializers.PrimaryKeyRelatedField(many=True)
-    notes = serializers.HyperlinkedRelatedField(many=True, view_name='notes-list')
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'username')
+        fields = ('id', 'username')
+
+class TagSerializer(serializers.ModelSerializer):
+
+    def validate_body(self, attrs, source):
+        # check that tag is not already defined
+        value = attrs[source]
+        queryset = Tag.objects.filter(body=value)
+        if queryset.count() > 0:
+            raise serializers.ValidationError("Tag already exists")
+        return attrs
+
+    class Meta:
+        model = Tag
+        fields = ('id', 'body')

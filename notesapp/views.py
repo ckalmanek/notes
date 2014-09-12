@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework import parsers
 from rest_framework import renderers
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
@@ -8,9 +9,11 @@ from rest_framework import generics
 from rest_framework import permissions
 from notesapp.models import Note
 from notesapp.models import Comment
+from notesapp.models import Tag
 from notesapp.serializers import NoteSerializer
 from notesapp.permissions import IsOwnerOrReadOnly
 from notesapp.serializers import CommentSerializer
+from notesapp.serializers import TagSerializer
 from django.http import Http404
 from django.contrib.auth.models import User
 from notesapp.serializers import UserSerializer
@@ -33,9 +36,18 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = NoteSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
     						IsOwnerOrReadOnly)
+    
+    parser_classes = (parsers.JSONParser,)
 
     def pre_save(self, obj):
     	obj.owner = self.request.user
+        try: 
+            tagstr = self.request.DATA['tags'][0]
+            print tagstr
+            tag = Tag.object.filter(body=tagstr)
+            obj.tags.add(tag)
+        except:
+            pass
 
 class CommentListAll(generics.ListAPIView):
     # List all commments 
@@ -69,7 +81,7 @@ class CommentList(generics.ListCreateAPIView):
         notekey = self.kwargs['pk']
         obj.note = Note.objects.get(pk=notekey)
 
-class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
+class CommentInstance(generics.RetrieveUpdateDestroyAPIView):
     # Retrieve, update or delete a comment 
 
     serializer_class = CommentSerializer
@@ -80,6 +92,22 @@ class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def pre_save(self, obj):
         obj.owner = self.request.user
+
+class TagList(generics.ListCreateAPIView):
+    # List all tags associated with a note, or create a new tag
+
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+class TagInstance(generics.RetrieveUpdateDestroyAPIView):
+    # Retrieve, update or delete a tar 
+
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()    
+
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 class UserList(generics.ListAPIView):
     # List all users
