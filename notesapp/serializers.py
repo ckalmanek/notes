@@ -36,6 +36,7 @@ class TagSerializer(serializers.ModelSerializer):
         # check that tag is not already defined
         value = attrs[source]
         queryset = Tag.objects.filter(body=value)
+        print queryset
         if queryset.count() > 0:
             raise serializers.ValidationError("Tag already exists")
         return attrs

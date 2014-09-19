@@ -15,6 +15,9 @@ class Note(models.Model):
     class Meta:
     	ordering = ('created',)
 
+    def __unicode__(self):
+    	return '%d: %s' % (self.pk, self.body)
+
 class Comment(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	body = models.TextField()

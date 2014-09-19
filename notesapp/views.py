@@ -36,18 +36,24 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = NoteSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
     						IsOwnerOrReadOnly)
-    
+
     parser_classes = (parsers.JSONParser,)
 
     def pre_save(self, obj):
     	obj.owner = self.request.user
+
+    def post_save(self, obj, created):
+        print obj
         try: 
             tagstr = self.request.DATA['tags'][0]
             print tagstr
-            tag = Tag.object.filter(body=tagstr)
+            queryset = Tag.objects.filter(body=tagstr)
+            tag = queryset.first()
+            print tag
+            print obj
             obj.tags.add(tag)
-        except:
-            pass
+        except Exception as inst:
+            print type(inst)
 
 class CommentListAll(generics.ListAPIView):
     # List all commments 
@@ -97,9 +103,9 @@ class TagList(generics.ListCreateAPIView):
     # List all tags associated with a note, or create a new tag
 
     serializer_class = TagSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = Tag.objects.all()
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 class TagInstance(generics.RetrieveUpdateDestroyAPIView):
     # Retrieve, update or delete a tar 
